@@ -4,7 +4,7 @@ const Home = () => {
   return (
     <div className="container text-center">
       <h1>Hello to Omkar Portfolio!</h1>
-      <p>Hi, I'm [Your Name]. I’m a Full-Stack Developer.</p>
+      <p>Hi, I'm [Your Name]. I’m a Full-Stack AI Developer.</p>
     </div>
   );
 };

@@ -1,0 +1,36 @@
+name: Deploy MERN App to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # Change this to your branch name if different
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH Key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@51.20.127.28 << 'EOF'
+          cd ~/Portfolio
+          # Pull latest changes
+          git pull origin main  # Change 'main' if using a different branch
+          # Backend setup
+          cd backend
+          npm install
+          pm2 restart server.js  # If using PM2 to manage your backend
+          # Frontend setup
+          cd ../frontend
+          npm install
+          npm run build
+          pm2 restart frontend  # If using PM2 for frontend (optional)
+          exit
+          EOF

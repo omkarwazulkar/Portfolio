@@ -1,3 +1,4 @@
+
 name: Deploy MERN App to AWS EC2
 
 on:
@@ -17,36 +18,20 @@ jobs:
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
           chmod 600 key.pem
-
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@13.60.6.247 << 'EOF'
           cd ~/Portfolio
           # Pull latest changes
           git pull origin main  # Change 'main' if using a different branch
-
           # Backend setup
           cd backend
           npm install
-          
-          # Check if the backend process exists, restart if it does, otherwise start it
-          if pm2 list | grep -q "backend"; then
-            pm2 restart backend
-          else
-            pm2 start server.js --name backend
-          fi
-
+          pm2 restart server.js  # If using PM2 to manage your backend
           # Frontend setup
           cd ../frontend
           npm install
           npm run build
-          
-          # Check if the frontend process exists, restart if it does, otherwise start it
-          if pm2 list | grep -q "frontend"; then
-            pm2 restart frontend
-          else
-            pm2 serve build 3000 --name frontend
-          fi
-
+          pm2 restart frontend  # If using PM2 for frontend (optional)
           exit
           EOF

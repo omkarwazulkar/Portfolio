@@ -26,11 +26,26 @@ jobs:
           # Backend setup
           cd backend
           npm install
-          pm2 restart server.js  # If using PM2 to manage your backend
+          # Check if the process is already running, and restart or start accordingly
+          pm2 list | grep 'backend' > /dev/null
+          if [ $? -eq 0 ]; then
+            echo "Process is already running. Restarting..."
+            pm2 restart backend # Restart if it is already running
+          else
+            echo "No process found. Starting the server..."
+            pm2 start server.js --name backend # Start if the process is not running
+          fi  # If using PM2 to manage your backend
           # Frontend setup
           cd ../frontend
           npm install
           npm run build
-          pm2 restart frontend  # If using PM2 for frontend (optional)
+          pm2 list | grep 'frontend' > /dev/null
+          if [ $? -eq 0 ]; then
+            echo "Frontend is already running. Restarting..."
+            pm2 restart frontend  # Restart the frontend if it's already running
+          else
+            echo "No frontend process found. Starting..."
+            pm2 serve build 3000 --name frontend  # Start the frontend if it's not running
+          fi
           exit
           EOF

@@ -28,7 +28,8 @@ jobs:
           # Backend setup
           cd backend
           npm install
-          # Check if backend process is running, restart if it is, otherwise start it
+          
+          # Check if the backend process exists, restart if it does, otherwise start it
           if pm2 list | grep -q "backend"; then
             pm2 restart backend
           else
@@ -39,7 +40,8 @@ jobs:
           cd ../frontend
           npm install
           npm run build
-          # Check if frontend process is running, restart if it is, otherwise start it
+          
+          # Check if the frontend process exists, restart if it does, otherwise start it
           if pm2 list | grep -q "frontend"; then
             pm2 restart frontend
           else

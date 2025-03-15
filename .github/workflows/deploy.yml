@@ -17,41 +17,20 @@ jobs:
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
           chmod 600 key.pem
-
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@13.60.6.247 << 'EOF'
           cd ~/Portfolio
           # Pull latest changes
           git pull origin main  # Change 'main' if using a different branch
-          
           # Backend setup
           cd backend
           npm install
-          
-          # Check if the backend process is already running, and restart or start accordingly
-          pm2 list | grep 'backend' > /dev/null
-          if [ $? -eq 0 ]; then
-            echo "Backend process is already running. Restarting..."
-            pm2 restart backend # Restart if it's already running
-          else
-            echo "Backend process not found. Starting for the first time..."
-            pm2 start server.js --name backend # Start if it's not running
-          fi
-          
+          pm2 restart server.js  # If using PM2 to manage your backend
           # Frontend setup
           cd ../frontend
           npm install
           npm run build
-          
-          # Check if the frontend process is already running, and restart or start accordingly
-          pm2 list | grep 'frontend' > /dev/null
-          if [ $? -eq 0 ]; then
-            echo "Frontend process is already running. Restarting..."
-            pm2 restart frontend  # Restart the frontend if it's already running
-          else
-            echo "Frontend process not found. Starting for the first time..."
-            pm2 serve build 3000 --name frontend  # Start the frontend if it's not running
-          fi
+          pm2 restart frontend  # If using PM2 for frontend (optional)
           exit
           EOF

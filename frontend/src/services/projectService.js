@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://13.61.184.47:5000/api/projects';
+const API_URL = 'http://13.60.6.247:5000/api/projects';
 
 // Fetch all projects
 export const getProjects = async () => {
